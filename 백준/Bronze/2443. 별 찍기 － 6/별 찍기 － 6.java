@@ -1,13 +1,11 @@
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.Scanner;
 
 class Main {
     public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        int n = scanner.nextInt();
+        int n = Integer.parseInt(br.readLine());
         String star = "*";
         String t = " ";
         int temp = 0;
@@ -21,7 +19,7 @@ class Main {
             temp++;
             bw.newLine();
         }
-        bw.flush();
+        bw.flush();//남아있는 데이터를 모두 출력시킴
         bw.close();
     }
 }
