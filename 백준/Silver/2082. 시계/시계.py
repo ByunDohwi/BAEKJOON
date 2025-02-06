@@ -31,13 +31,8 @@ for i in range(5):
     list[2] += timeList[2]
     list[3] += timeList[3]
 
-from pprint import pprint
-
 answer += str(findTime(str_num[:3],list[0]))
-if(answer != '2'):
-    answer += str(findTime(str_num[:],list[1]))
-else:
-    answer += str(findTime(str_num[:4],list[1]))
+answer += str(findTime(str_num[:],list[1]))
 answer += str(findTime(str_num[:6],list[2]))
 answer += str(findTime(str_num[:],list[3]))
 
