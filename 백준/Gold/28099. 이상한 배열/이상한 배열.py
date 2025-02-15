@@ -1,66 +1,53 @@
 import sys
 input = sys.stdin.readline
 
-def merge(a, b):
-    if arr[a] >= arr[b]:
+n = int(input())
+
+def segment(left, right, node):
+    if left==right:
+        tree[node] = left
+        return tree[node]
+    mid = (left+right)//2
+    tree[node] = merge(segment(left,mid,node*2),segment(mid+1,right,node*2+1))
+    return tree[node]
+
+def merge(a,b):
+    if nodes[a] >= nodes[b]:
         return a
     return b
 
-def buildSegmentTree(node, start, end):
-    if start == end:
-        segmentTree[node] = start
-        return segmentTree[node]
-    
-    mid = (start + end) // 2;
-    left = buildSegmentTree(node*2, start, mid)
-    right = buildSegmentTree(node*2 + 1, mid + 1, end)
-
-    segmentTree[node] = merge(left, right)
-    return segmentTree[node]
-
-def checkSection(targetStart, targetEnd, node, start, end):
-    if targetStart > targetEnd:
-        return 0
-    
-    if targetEnd < start or targetStart > end:
-        return 0
-    
-    if targetStart <= start and end <= targetEnd:
+def query(target_start, target_end, node, start, end):#target start,end - 탐색 범위| start, end - 전체 범위| node - 현재 노드(인덱스)
+    if target_end < start or target_start > end:# 말이 안되는 상황 : 꺼져라
+        return -1
+    if target_start <= start and end <= target_end:#target범위가 맞을때
         return node
     
-    mid = (start + end) // 2
-    left = checkSection(targetStart, targetEnd, node*2, start, mid)
-    right = checkSection(targetStart, targetEnd, node*2 +1, mid +1, end)
+    mid = (start+end)//2
+    left = query(target_start,target_end,2*node,start,mid)
+    right = query(target_start,target_end,2*node+1,mid+1,end)
 
-    if arr[segmentTree[left]] < arr[segmentTree[right]]:
+    if nodes[tree[left]] < nodes[tree[right]]:
         return right
     return left
-    
 
-T = int(input())
+for i in range(n):
+    node_len = int(input())
+    nodes = list(map(int,input().split()))
+    nodes.append(0)
+    tree = [-1] * (node_len * 4)
+    tree[0] = node_len
+    final_idx = [-1]* (node_len+1)
 
-for _ in range(T):
-    N = int(input())
-    arr = list(map(int, input().split()))
-    arr.append(0)
-    segmentTree = [-1] * (4 * N)
-    buildSegmentTree(1, 0, N-1)
-    segmentTree[0] = N
+    segment(0,node_len-1,1)
 
-    numberIndex = [-1] * (N+1)
-    flag = True
-    for i in range(N):
-        num = arr[i]
-        if numberIndex[num] == -1:
-            numberIndex[num] = i
-        else:
-            node = checkSection(numberIndex[num]+1, i-1, 1, 0, N-1)
-            if arr[segmentTree[node]] > num:
-                flag = False
+    is_strange = 1
+    for right in range(node_len):
+        left = final_idx[nodes[right]]
+        if left != -1:
+            panel_max_num_idx = query(left,right,1,0,node_len-1)
+            if nodes[tree[panel_max_num_idx]] > nodes[left]:
+                is_strange = 0
                 break
-            numberIndex[num] = i
-    
-    if flag == True:
-        print("Yes")
-    else:
-        print("No")
+        final_idx[nodes[right]] = right
+    print("Yes" if is_strange else "No")
+
