@@ -1,22 +1,15 @@
-answer = 0
-N = 0
-visited = []
-
-def dfs(k, count, dungeons):
-    global answer
-    answer = max(answer, count)
-    for i in range(N):
-        if(k >= dungeons[i][0] and not visited[i]):
-            visited[i]=1
-            dfs(k-dungeons[i][1],count+1,dungeons)
-            visited[i] =0
-
 def solution(k, dungeons):
-    global N, visited
-    N = len(dungeons)
-    visited = [0] * N
-    dfs(k, 0, dungeons)
-    return answer
+    n = len(dungeons)
 
-    
-    
+    def dfs(energy, visited, cleared):
+        # 현재까지 깬 수를 기준으로 최대치 갱신 (리턴)
+        best = cleared
+        for i in range(n):
+            need, cost = dungeons[i]
+            if not visited[i] and energy >= need:
+                visited[i] = True                  # 선택
+                best = max(best, dfs(energy - cost, visited, cleared + 1))
+                visited[i] = False                 # 원상복구(백트래킹)
+        return best
+
+    return dfs(k, [False]*n, 0)
