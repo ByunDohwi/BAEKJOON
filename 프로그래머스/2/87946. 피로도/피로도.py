@@ -1,18 +1,21 @@
-from itertools import permutations 
+answer = 0
+N = 0
+visited = []
 
-def goto_dungeon(k,dungeon_johab):
-    answer = 0
-    for d in dungeon_johab:
-        if k >= d[0]:
-            k -= d[1]
-            answer += 1
-    return answer
+def dfs(k, count, dungeons):
+    global answer
+    answer = max(answer, count)
+    for i in range(N):
+        if(k >= dungeons[i][0] and not visited[i]):
+            visited[i]=1
+            dfs(k-dungeons[i][1],count+1,dungeons)
+            visited[i] =0
 
 def solution(k, dungeons):
-    answer = 0
-    for i in permutations(dungeons):
-        answer = max(goto_dungeon(k,i), answer)
-    
+    global N, visited
+    N = len(dungeons)
+    visited = [0] * N
+    dfs(k, 0, dungeons)
     return answer
 
     
